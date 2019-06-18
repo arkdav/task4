@@ -43,5 +43,4 @@ public class GiftAction {
         }
         return sugarSweetsList;
     }
-
 }
