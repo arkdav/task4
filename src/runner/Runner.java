@@ -1,7 +1,7 @@
 package runner;
 
 import action.GiftAction;
-import entity.Gift;
+import collector.Gift;
 
 import java.util.Scanner;
 

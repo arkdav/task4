@@ -1,4 +1,4 @@
-package entity;
+package collector;
 
 public enum TypeSweet {
     CANDY(),

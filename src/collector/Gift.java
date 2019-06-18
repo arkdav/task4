@@ -1,13 +1,17 @@
-package entity;
+package collector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import entity.*;
 import exception.DataException;
 import parser.DataParser;
 import reader.DataReader;
 
 public class Gift{
 
+    private static final Logger log = Logger.getLogger(Gift.class.getName());
     private final int MAX_NUMBER_SWEETNESS = 15;
     private List<Sweetness> gift;
 
@@ -19,7 +23,7 @@ public class Gift{
         this.gift = new ArrayList<>(gift);
     }
 
-    public  Gift(Gift gift){
+    public Gift(Gift gift){
         this.gift = new ArrayList<>(gift.gift);
     }
 
@@ -51,7 +55,22 @@ public class Gift{
         }
     }
 
+    public void addSweetnessFromFile (String path){
+        DataReader reader = new DataReader();
+        try{
+            List<String> lines = reader.readAll(path);
+            DataParser converter = new DataParser();
+            List<List<Integer>> resultArrays = converter.convertToIntArrays(lines);
+            for (int rowNumber=0; rowNumber<resultArrays.size(); rowNumber++) {
+                this.addSweetnessFromRow(resultArrays.get(rowNumber));
+            }
+        } catch (DataException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addSweetnessFromRow (List <Integer> numbers) throws DataException{
+        log.info("Adding sweetness from file.");
         int typeIndex=numbers.get(0);
         double weight=(double)numbers.get(1);
         double sugar=(double)numbers.get(2);
@@ -59,11 +78,13 @@ public class Gift{
         Sweetness sweet;
         switch(typeIndex){
             case 1: sweet = new Candy(weight,sugar); break;
-            case 2: sweet = new Biscuit(weight,sugar);break;
-            case 3: sweet = new Chocolate(weight,sugar);break;
-            case 4: sweet = new Marmalade(weight,sugar);break;
-            case 5: sweet = new Waffle(weight,sugar);break;
-            default: throw new DataException("Error with type index");
+            case 2: sweet = new Biscuit(weight,sugar); break;
+            case 3: sweet = new Chocolate(weight,sugar); break;
+            case 4: sweet = new Marmalade(weight,sugar); break;
+            case 5: sweet = new Waffle(weight,sugar); break;
+            default:
+                log.warning("Incomprehensible type index");
+                throw new DataException("Error with type index");
         }
         if(number==1) {
             this.addSweetness(sweet);
@@ -73,17 +94,5 @@ public class Gift{
         }
     }
 
-    public void addSweetnessFromFile (String path){
-        DataReader reader = new DataReader();
-        try{
-            List<String> lines = reader.readAll(path);
-        DataParser converter = new DataParser();
-        List<List<Integer>> resultArrays = converter.convertToIntArrays(lines);
-        for (int rowNumber=0; rowNumber<resultArrays.size();rowNumber++) {
-            this.addSweetnessFromRow(resultArrays.get(rowNumber));
-        }
-        } catch (DataException e) {
-            e.printStackTrace();
-        }
-    }
+
 }
